@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <main class="container">
+        <header>
+            <h1>Expense Tracker</h1>
+            <p>Manage your daily spending in one place.</p>
+        </header>
+
+        <section class="summary">
+            <div>
+                <p>Total Expenses</p>
+                <h2>₹{{ "%.2f"|format(total) }}</h2>
+            </div>
+            <div>
+                <p>Transactions</p>
+                <h2>{{ expenses|length }}</h2>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>Add an expense</h2>
+            <form action="{{ url_for('add_expense') }}" method="post">
+                <label>Expense title
+                    <input name="title" required placeholder="e.g. Lunch">
+                </label>
+
+                <label>Amount (₹)
+                    <input name="amount" type="number" min="0.01"
+                           step="0.01" required>
+                </label>
+
+                <label>Category
+                    <select name="category" required>
+                        <option value="">Select category</option>
+                        <option>Food</option>
+                        <option>Travel</option>
+                        <option>Shopping</option>
+                        <option>Education</option>
+                        <option>Bills</option>
+                        <option>Other</option>
+                    </select>
+                </label>
+
+                <label>Date
+                    <input name="date" type="date" required>
+                </label>
+
+                <button type="submit">Add Expense</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h2>Recent transactions</h2>
+            {% if expenses %}
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for expense in expenses %}
+                        <tr>
+                            <td>{{ expense.date }}</td>
+                            <td>{{ expense.title }}</td>
+                            <td>{{ expense.category }}</td>
+                            <td>₹{{ "%.2f"|format(expense.amount) }}</td>
+                            <td>
+                                <form action="{{ url_for('delete_expense', expense_id=expense.id) }}"
+                                      method="post">
+                                    <button class="delete" type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="empty">No expenses yet. Add your first expense above.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>
+

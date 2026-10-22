@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Expense Tracker</title>
+    <style>
+        body { font-family: Arial; background: #f2f4fa; margin: 30px; color: #202840; }
+        main { max-width: 850px; margin: auto; }
+        section { background: white; padding: 20px; margin: 18px 0; border-radius: 12px; }
+        input, select, button { padding: 11px; margin: 5px; border: 1px solid #ddd; border-radius: 6px; }
+        button { background: #5b50d6; color: white; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Expense Tracker</h1>
+    <p>Manage your daily expenses</p>
+
+    <section>
+        <h2>Total Expenses: ₹{{ "%.2f"|format(total) }}</h2>
+        <h3>Transactions: {{ expenses|length }}</h3>
+    </section>
+
+    <section>
+        <h2>Add Expense</h2>
+        <form action="/add" method="post">
+            <input name="title" placeholder="Expense name" required>
+            <input name="amount" type="number" min="0.01" step="0.01" placeholder="Amount ₹" required>
+            <select name="category" required>
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Education">Education</option>
+                <option value="Bills">Bills</option>
+                <option value="Other">Other</option>
+            </select>
+            <input name="date" type="date" required>
+            <button type="submit">Add Expense</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Expense History</h2>
+        {% if expenses %}
+        <table>
+            <tr><th>Date</th><th>Name</th><th>Category</th><th>Amount</th><th>Action</th></tr>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense.date }}</td>
+                <td>{{ expense.title }}</td>
+                <td>{{ expense.category }}</td>
+                <td>₹{{ "%.2f"|format(expense.amount) }}</td>
+                <td><form action="/delete/{{ expense.id }}" method="post"><button>Delete</button></form></td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No expenses added yet.</p>
+        {% endif %}
+    </section>
+</main>
+</body>
+</html>
+
